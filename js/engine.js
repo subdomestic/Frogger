@@ -26,8 +26,9 @@ var Engine = (function(global) {
         lastTime;
 
     canvas.width = 505;
-    canvas.height = 606;
+    canvas.height = 707;
     doc.body.appendChild(canvas);
+    canvas.addEventListener("click", handleMouseClick, false);
 
     /* This function serves as the kickoff point for the game loop itself
      * and handles properly calling the update and render methods.
@@ -57,7 +58,7 @@ var Engine = (function(global) {
          * function again as soon as the browser is able to draw another frame.
          */
         win.requestAnimationFrame(main);
-    };
+    }
 
     /* This function does some initial setup that should only occur once,
      * particularly setting the lastTime variable that is required for the
@@ -80,7 +81,8 @@ var Engine = (function(global) {
      */
     function update(dt) {
         updateEntities(dt);
-        // checkCollisions();
+        checkCollisions(allEnemies, player);
+        updateScore(player.score);
     }
 
     /* This is called by the update function  and loops through all of the
@@ -134,6 +136,12 @@ var Engine = (function(global) {
                  */
                 ctx.drawImage(Resources.get(rowImages[row]), col * 101, row * 83);
             }
+                //Add the characters to select at the bottom of the canvas
+                ctx.drawImage(Resources.get('images/char-boy.png'), 0, 7*83);
+                ctx.drawImage(Resources.get('images/char-cat-girl.png'), 101, 7*83);
+                ctx.drawImage(Resources.get('images/char-horn-girl.png'), 2*101, 7*83);
+                ctx.drawImage(Resources.get('images/char-pink-girl.png'), 3*101, 7*83);
+                ctx.drawImage(Resources.get('images/char-princess-girl.png'), 4*101, 7*83);
         }
 
 
@@ -151,6 +159,9 @@ var Engine = (function(global) {
         allEnemies.forEach(function(enemy) {
             enemy.render();
         });
+        allGems.forEach(function(gem) {
+            gem.render();
+        });
 
         player.render();
     }
@@ -167,12 +178,20 @@ var Engine = (function(global) {
      * draw our game level. Then set init as the callback method, so that when
      * all of these images are properly loaded our game will start.
      */
+     //I've added the gems images and all the characters
     Resources.load([
         'images/stone-block.png',
         'images/water-block.png',
         'images/grass-block.png',
         'images/enemy-bug.png',
-        'images/char-boy.png'
+        'images/Gem Blue.png',
+        'images/Gem Green.png',
+        'images/Gem Orange.png',
+        'images/char-boy.png',
+        'images/char-cat-girl.png',
+        'images/char-horn-girl.png',
+        'images/char-pink-girl.png',
+        'images/char-princess-girl.png'
     ]);
     Resources.onReady(init);
 
@@ -180,5 +199,7 @@ var Engine = (function(global) {
      * object when run in a browser) so that developer's can use it more easily
      * from within their app.js files.
      */
+     //Assign the canvas to the global variable to use it within app.js to capture x,y values from click event.
+    global.canvas = canvas;
     global.ctx = ctx;
 })(this);
